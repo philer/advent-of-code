@@ -4,7 +4,9 @@ from dataclasses import dataclass
 from functools import reduce
 from itertools import batched, chain
 
-EXAMPLE = """
+from aoc import aoc
+
+attempt = aoc(day=5, example="""
 seeds: 79 14 55 13
 
 seed-to-soil map:
@@ -38,7 +40,7 @@ temperature-to-humidity map:
 humidity-to-location map:
 60 56 37
 56 93 4
-""".strip()
+""")
 
 
 def parse_seeds(lines):
@@ -82,6 +84,7 @@ def parse_mappings(lines):
             range_pairs = []
     yield Mapping(range_pairs)
 
+@attempt(part=1, expected=35)
 def solve_1(input):
     lines = input.strip().split("\n")
     seeds = parse_seeds(lines)
@@ -95,6 +98,7 @@ def solve_1(input):
         for seed in seeds
     )
 
+@attempt(part=2, expected=46)
 def solve_2(input):
     lines = input.strip().split("\n")
     seed_ranges = parse_seed_ranges(lines)
@@ -106,15 +110,3 @@ def solve_2(input):
         seed_ranges,
     )
     return min(rng.start for rng in ranges)
-
-
-print("Part 1 example:", solve_1(EXAMPLE))
-with open("inputs/day05.txt", "r") as f:
-    print("Part 1 solution:", solve_1(f.read().strip()))
-
-print("Part 2 example:", solve_2(EXAMPLE))
-with open("inputs/day05.txt", "r") as f:
-    input = f.read().strip()
-    print("Part 2 solution:", solve_2(input))
-    # import timeit
-    # print(timeit.Timer("solve_2(input)", setup="from __main__ import input, solve_2").autorange())

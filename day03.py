@@ -5,7 +5,9 @@ from dataclasses import dataclass
 from operator import mul
 from functools import reduce
 
-EXAMPLE = """
+from aoc import aoc
+
+attempt = aoc(day=3, example="""
 467..114..
 ...*......
 ..35..633.
@@ -16,7 +18,7 @@ EXAMPLE = """
 ......755.
 ...$.*....
 .664.598..
-""".strip()
+""")
 
 
 def find_part_numbers(grid: list[str]):
@@ -34,6 +36,7 @@ def find_part_numbers(grid: list[str]):
                 ):
                 yield int(match[0])
 
+@attempt(part=1, expected=4361)
 def solve_1(input):
     grid = input.split("\n")
     return sum(find_part_numbers(grid))
@@ -75,14 +78,6 @@ def find_gears(grid: list[str]):
         if len(adjacent_numbers) == 2:
             yield reduce(mul, (n.value for n in adjacent_numbers))
 
+@attempt(part=2, expected=467835)
 def solve_2(input):
     return sum(find_gears(input.split("\n")))
-
-
-print("Part 1 example:", solve_1(EXAMPLE))
-with open("inputs/day03.txt", "r") as file:
-    print("Part 1 solution:", solve_1(file.read()))
-
-print("Part 2 example:", solve_2(EXAMPLE))
-with open("inputs/day03.txt", "r") as file:
-    print("Part 2 solution:", solve_2(file.read()))
