@@ -29,7 +29,7 @@ def aoc(*, day: int, example: str):
     def solution[T: int | str](*, part: int, expected: T):
         def attempt(fn: Callable[[str], T]):
             result = fn(example.strip())
-            print(f"Part {part} example:  {result} {'✅' if result == expected else '❌'}")
+            print(f"Part {part} example:  {result} {'✅' if result == expected else f'!= {expected} ❌'}")
             if result == expected:
                 result = fn(get_input(day=day).strip())
                 print(f"Part {part} solution: {result}")
