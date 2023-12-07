@@ -2,3 +2,5 @@ cookie
 inputs/
 
 __pycache__
+
+*.sublime-*

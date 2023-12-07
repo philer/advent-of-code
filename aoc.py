@@ -25,13 +25,20 @@ def get_input(*, day: int) -> str:
     return path.read_text()
 
 
-def aoc(*, day: int, example: str):
-    def solution[T: int | str](*, part: int, expected: T):
+def aoc(*, day: int, example: str | tuple[str, ...]):
+    if not isinstance(example, tuple):
+        example = (example,)
+    def solution[T: int | str](*, part: int, expected: T | tuple[T, ...]):
+        if not isinstance(expected, tuple):
+            expected = (expected,)
         def attempt(fn: Callable[[str], T]):
-            result = fn(example.strip())
-            print(f"Part {part} example:  {result} {'✅' if result == expected else f'!= {expected} ❌'}")
-            if result == expected:
+            any_failed = False
+            for example_, expected_ in zip(example, expected):
+                result = fn(example_.strip())
+                any_failed |= result != expected_
+                print(f"### Part {part} example:  {result} {'✅' if result == expected_ else f'!= {expected_} ❌'}\n")
+            if not any_failed:
                 result = fn(get_input(day=day).strip())
-                print(f"Part {part} solution: {result}")
+                print(f"### Part {part} solution: {result}\n")
         return attempt
     return solution
