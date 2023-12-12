@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from functools import wraps
 from pathlib import Path
 from typing import Callable
 from urllib.request import Request, urlopen
@@ -42,3 +43,16 @@ def aoc(*, day: int, example: str | tuple[str, ...]):
                 print(f"### Part {part} solution: {result}\n")
         return attempt
     return solution
+
+
+
+def show_result(fn):
+    """Utility decorator for debugging.
+    Prints arguments and result of each call of the decorated function.
+    """
+    @wraps(fn)
+    def wrapped(*args):
+        result = fn(*args)
+        print(*args, "->", result)
+        return result
+    return wrapped
