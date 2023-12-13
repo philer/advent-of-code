@@ -29,7 +29,7 @@ def parse(input: str):
     return (img.split("\n") for img in input.split("\n\n"))
 
 def transpose(grid: Sequence[str]):
-    return tuple("".join(grid[column][row] for column in range(len(grid))) for row in range(len(grid[0])))
+    return tuple("".join(line[idx] for line in grid) for idx in range(len(grid[0])))
 
 def find_horizontal_axis(image: Sequence[str]):
     for axis in range(1, len(image)):
