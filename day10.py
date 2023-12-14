@@ -49,8 +49,6 @@ class D(tuple[Literal[-1, 0, 1], Literal[-1, 0, 1]], Enum):
     LEFT = 0, -1
 
 def find_adjacent_pipe_directions(grid: Grid, at: Point) -> Iterator[Direction]:
-    # row, col = at
-    # direction = (0, 0)
     for direction, connections in (D.DOWN, "|LJ"), (D.RIGHT, "-J7"), (D.UP, "|7F"), (D.LEFT, "-FL"):
         row, col = at[0] + direction[0], at[1] + direction[1]
         if grid[row][col] in connections:
@@ -177,7 +175,6 @@ def get_zoomed_grid(grid, start):
 @attempt(part=2, expected=(4, 4, 8, 10))
 def solve_2(input):
     grid = tuple(input.split("\n"))
-    print(*grid, sep="\n")
     start = divmod("".join(grid).index("S"), len(grid[0]))
     start_direction = next(find_adjacent_pipe_directions(grid, start))
     loop = set(get_loop(grid, start, start_direction))
@@ -187,7 +184,6 @@ def solve_2(input):
     # connected by empty space and a simple neighbor search can find all
     # outside squares without having to follow zero-width pathways.
     zoomed_grid = get_zoomed_grid(grid, start)
-    print(*zoomed_grid, sep="\n")
     zoomed_start = start[0] * 3 + 1, start[1] * 3 + 1
     zoomed_loop = set(get_loop(zoomed_grid, zoomed_start, start_direction))
 
