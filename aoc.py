@@ -46,7 +46,7 @@ def aoc(*, day: int, example: str | tuple[str, ...]):
 
 
 
-def show_result(fn):
+def print_args(fn):
     """Utility decorator for debugging.
     Prints arguments and result of each call of the decorated function.
     """
