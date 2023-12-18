@@ -33,6 +33,17 @@ class D(tuple[Literal[-1, 0, 1], Literal[-1, 0, 1]], Enum):
     UP = -1, 0
     LEFT = 0, -1
 
+    @property
+    def left(self):
+        return {D.DOWN: D.RIGHT, D.RIGHT: D.UP, D.UP: D.LEFT, D.LEFT: D.DOWN}[self]
+
+    @property
+    def right(self):
+        return {D.DOWN: D.LEFT, D.LEFT: D.UP, D.UP: D.RIGHT, D.RIGHT: D.DOWN}[self]
+
+    def move(self, point: Point, steps: int=1) -> Point:
+        return point[0] + self[0] * steps, point[1] + self[1] * steps
+
 
 def parse(input: str) -> Grid:
     return tuple(tuple(map(int, line)) for line in input.splitlines())
@@ -53,7 +64,7 @@ def shortest_path(grid: Grid, start: Point, goal: Point, min_steps: int, max_ste
         current, direction, distance = to_check.pop()
         point = current
         for steps in range(1, max_steps + 1):
-            point = point[0] + direction[0], point[1] + direction[1]
+            point = direction.move(current, steps)
             if not (0 <= point[0] < height and 0 <= point[1] < width):
                 break
             distance += grid[point[0]][point[1]]
@@ -65,10 +76,8 @@ def shortest_path(grid: Grid, start: Point, goal: Point, min_steps: int, max_ste
                 break
             if shortest.get((point, direction), ((0, 0), 2**64))[1] > distance:
                 shortest[(point, direction)] = current, distance
-                left = {D.DOWN: D.RIGHT, D.RIGHT: D.UP, D.UP: D.LEFT, D.LEFT: D.DOWN}[direction]
-                to_check.append((point, left, distance))
-                right =  {D.DOWN: D.LEFT, D.LEFT: D.UP, D.UP: D.RIGHT, D.RIGHT: D.DOWN}[direction]
-                to_check.append((point, right, distance))
+                to_check.append((point, direction.left, distance))
+                to_check.append((point, direction.right, distance))
     return min(shortest[(goal, direction)][1] for direction in D if (goal, direction) in shortest)
 
 
