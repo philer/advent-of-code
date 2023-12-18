@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from collections import deque
 from collections.abc import Iterable
 from enum import Enum
 from typing import Literal
@@ -48,48 +47,6 @@ def parse_1(input: str) -> Iterable[tuple[D, int]]:
         )
 
 
-def dig_loop(instructions: Iterable[tuple[D, int]]) -> Iterable[Point]:
-    position = 0, 0
-    yield position
-    for direction, steps in instructions:
-        for _ in range(steps):
-            position = direction.move(position)
-            yield position
-
-
-def dig_inside_loop(loop: set[Point]) -> set[Point]:
-    # Crawl the outside of the loop
-    # with a one tile gap around to ensure a fully connected area.
-    min_row = min(row for row, _ in loop) - 1
-    min_column = min(column for _, column in loop) - 1
-    max_row = max(row for row, _ in loop) + 1
-    max_column = max(column for _, column in loop) + 1
-    outside = set[Point]()
-    to_check = deque([(min_row, min_column)])
-    while to_check:
-        check = to_check.pop()
-        for neighbour in (direction.move(check) for direction in D):
-            if (min_row <= neighbour[0] <= max_row
-                and min_column <= neighbour[1] <= max_column
-                and neighbour not in loop
-                and neighbour not in outside):
-                outside.add(neighbour)
-                to_check.append(neighbour)
-
-    # invert the result to get only the inside
-    all_points: set[Point] = {(row, column)
-                              for row in range(min_row, max_row + 1)
-                              for column in range(min_column, max_column + 1)}
-    return all_points - loop - outside
-
-
-@attempt(part=1, expected=62)
-def solve_1(input: str):
-    loop = set(dig_loop(parse_1(input)))
-    inside = set(dig_inside_loop(loop))
-    return len(loop | inside)
-
-
 def parse_2(input: str) -> Iterable[tuple[D, int]]:
     for line in input.splitlines():
         _, hex_digits = line.split("#")
@@ -99,6 +56,25 @@ def parse_2(input: str) -> Iterable[tuple[D, int]]:
         )
 
 
+def get_hole_size(instructions: Iterable[tuple[D, int]]) -> int:
+    interior = 0
+    current = 0, 0
+    for direction, steps in instructions:
+        previous, current = current, direction.move(current, steps)
+        if d_row := current[0] - previous[0]:
+            interior += d_row * (previous[1] + 1)
+            if d_row < 0:
+                interior -= d_row
+        elif (d_column := current[1] - previous[1]) < 0:
+            interior -= d_column
+    return interior + 1
+
+
+@attempt(part=1, expected=62)
+def solve_1(input: str):
+    return get_hole_size(parse_1(input))
+
+
 @attempt(part=2, expected=952_408_144_115)
 def solve_2(input: str):
-    return 0
+    return get_hole_size(parse_2(input))
